@@ -63,7 +63,7 @@ fn get_cmsisdap_info(device: &Device<rusb::Context>) -> Option<DebugProbeInfo> {
         .ok();
 
     // Most CMSIS-DAP probes say "CMSIS-DAP" in their product string.
-    let cmsis_dap_product = prod_str.contains("CMSIS-DAP");
+    let cmsis_dap_product = prod_str.contains("CMSIS-DAP") || prod_str.contains("CMSIS_DAP");
 
     // Iterate all interfaces, looking for:
     // 1. Any with CMSIS-DAP in their interface string
@@ -127,7 +127,7 @@ fn get_cmsisdap_info(device: &Device<rusb::Context>) -> Option<DebugProbeInfo> {
 fn get_cmsisdap_hid_info(device: &hidapi::DeviceInfo) -> Option<DebugProbeInfo> {
     let prod_str = device.product_string().unwrap_or("");
     let path = device.path().to_str().unwrap_or("");
-    if prod_str.contains("CMSIS-DAP") || path.contains("CMSIS-DAP") {
+    if prod_str.contains("CMSIS-DAP") || prod_str.contains("CMSIS_DAP") || path.contains("CMSIS-DAP") || path.contains("CMSIS_DAP")  {
         tracing::trace!("CMSIS-DAP device with USB path: {:?}", device.path());
         tracing::trace!("                product_string: {:?}", prod_str);
         tracing::trace!(
@@ -366,7 +366,7 @@ pub fn open_device_from_selector(
     let device = device_info.open_device(&hid_api)?;
 
     match device.get_product_string() {
-        Ok(Some(s)) if s.contains("CMSIS-DAP") => Ok(CmsisDapDevice::V1 {
+        Ok(Some(s)) if s.contains("CMSIS-DAP") || s.contains("CMSIS_DAP") => Ok(CmsisDapDevice::V1 {
             handle: device,
             // Start with a default 64-byte report size, which is the most
             // common size for CMSIS-DAPv1 HID devices. We'll request the
