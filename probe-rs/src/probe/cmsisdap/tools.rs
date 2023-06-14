@@ -366,7 +366,7 @@ pub fn open_device_from_selector(
     let device = device_info.open_device(&hid_api)?;
 
     match device.get_product_string() {
-        Ok(Some(s)) if s.contains("CMSIS-DAP") || s.contains("CMSIS_DAP") => Ok(CmsisDapDevice::V1 {
+        Ok(Some(s)) if s.contains("CMSIS-DAP") || s.contains("CMSIS_DAP") || s.contains("WCH-Link")  => Ok(CmsisDapDevice::V1 {
             handle: device,
             // Start with a default 64-byte report size, which is the most
             // common size for CMSIS-DAPv1 HID devices. We'll request the
