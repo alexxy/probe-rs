@@ -86,7 +86,7 @@ fn get_cmsisdap_info(device: &Device<rusb::Context>) -> Option<DebugProbeInfo> {
                 }
             };
 
-            if interface_desc.contains("CMSIS-DAP") {
+            if interface_desc.contains("CMSIS-DAP") || interface_desc.contains("CMSIS_DAP") {
                 tracing::trace!("  Interface {}: {}", interface.number(), interface_desc);
                 cmsis_dap_interface = true;
                 if descriptor.class_code() == LIBUSB_CLASS_HID {
